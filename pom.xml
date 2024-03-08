@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>vn.edu.fpt</groupId>
-    <artifactId>horo</artifactId>
+    <artifactId>clone-fb-api</artifactId>
     <version>1.0</version>
-    <name>Horo</name>
-    <description>Horo system</description>
+    <name>clone-fb-api</name>
+    <description>clone-fb-api</description>
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>2021.0.3</spring-cloud.version>
