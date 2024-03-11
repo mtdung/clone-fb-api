@@ -78,15 +78,10 @@ public class SecurityConfiguration {
                 .antMatchers("/actuator/**")
                 .antMatchers("/swagger-ui/**")
                 .antMatchers("/v3/api-docs/**")
-                .antMatchers(HttpMethod.POST,"/"+applicationContext+"/public/api/v1/accounts")
-                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/accounts/account/login")
-                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/accounts/account/login/gg")
-                .antMatchers(HttpMethod.POST,"/"+applicationContext+"/public/api/v1/accounts/token/refresh")
-                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/accounts/password/reset")
-                .antMatchers(HttpMethod.GET, "/"+applicationContext+"/public/api/v1/email/verify")
-                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/email/verify")
-                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/email/reset-password")
-                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/accounts/account/ott/verify");
+                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/user/login")
+                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/user/login/gg")
+                .antMatchers(HttpMethod.POST,"/"+applicationContext+"/public/api/v1/user/token/refresh")
+                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/user/password/reset");
 
     }
     @Bean

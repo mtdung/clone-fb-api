@@ -6,9 +6,10 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import vn.edu.fpt.fb.dto.common.GeneralResponse;
-import vn.edu.fpt.fb.dto.common._ResponseStatus;
-import vn.edu.fpt.fb.factory.ResponseFactory;
+import vn.edu.fpt.fb.common.constant.ResponseStatusEnum;
+import vn.edu.fpt.fb.common.constant.factory.GeneralResponse;
+import vn.edu.fpt.fb.common.constant.factory.ResponseFactory;
+import vn.edu.fpt.fb.common.constant.factory.ResponseStatusCustom;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +31,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
         GeneralResponse<Object> generalResponse = new GeneralResponse<>();
-        generalResponse.setStatus(new _ResponseStatus(ResponseStatusEnum.UNAUTHORIZED));
+        generalResponse.setStatus(new ResponseStatusCustom(ResponseStatusEnum.UNAUTHORIZED));
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         OutputStream responseStream = response.getOutputStream();

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import vn.edu.fpt.fb.service.inter.HandleTokenService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -26,7 +27,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final _TokenService tokenService;
+    private final HandleTokenService handleTokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -39,7 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         final String token = header.split(" ")[1].trim();
-        Optional<Authentication> authenticationFromToken = tokenService.getAuthenticationFromToken(token);
+        Optional<Authentication> authenticationFromToken = handleTokenService.getAuthenticationFromToken(token);
 
         if(authenticationFromToken.isEmpty()){
             chain.doFilter(request, response);

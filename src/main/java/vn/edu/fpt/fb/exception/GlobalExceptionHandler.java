@@ -26,9 +26,10 @@ import org.springframework.web.context.request.async.AsyncRequestTimeoutExceptio
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import vn.edu.fpt.fb.dto.common.GeneralResponse;
-import vn.edu.fpt.fb.dto.common._ResponseStatus;
-import vn.edu.fpt.fb.factory.ResponseFactory;
+import vn.edu.fpt.fb.common.constant.ResponseStatusEnum;
+import vn.edu.fpt.fb.common.constant.factory.GeneralResponse;
+import vn.edu.fpt.fb.common.constant.factory.ResponseFactory;
+import vn.edu.fpt.fb.common.constant.factory.ResponseStatusCustom;
 
 import java.util.Objects;
 
@@ -41,12 +42,10 @@ import java.util.Objects;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final ResponseFactory responseFactory;
-    private final DisplayMessageService displayMessageService;
 
     @Autowired
-    public GlobalExceptionHandler(ResponseFactory responseFactory, DisplayMessageService displayMessageService) {
+    public GlobalExceptionHandler(ResponseFactory responseFactory) {
         this.responseFactory = responseFactory;
-        this.displayMessageService = displayMessageService;
     }
 
 
@@ -239,8 +238,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> generateResponseEntity(ResponseStatusEnum status, String message){
-        _ResponseStatus responseStatus = new _ResponseStatus(status.getStatus(), status.getCode());
-        responseStatus.setDisplayMessage(displayMessageService.getDisplayMessage(status.getCode()));
+        ResponseStatusCustom responseStatus = new ResponseStatusCustom(status.getStatus(), status.getCode());
         responseStatus.setMessage(message);
         return ResponseEntity.status(status.getStatus()).body(responseStatus);
     }

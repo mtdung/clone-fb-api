@@ -1,6 +1,7 @@
 package vn.edu.fpt.fb.exception;
 
 import lombok.Getter;
+import vn.edu.fpt.fb.common.constant.ResponseStatusEnum;
 
 /**
  * vn.edu.fpt.accounts.exception

@@ -23,13 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableJpaAuditing
 @SpringBootApplication
 @EnableScheduling
-@OpenAPIDefinition(info = @Info(title = "Horo System ", version = "1.0"),
-        servers = {@Server(url = "/", description = "Default Server URL")})
 public class UserServiceApplication{
-    @Autowired
-    private AccountService accountService;
-    @Autowired
-    private RoleService roleService;
 
     public static void main(String[] args) {
         SpringApplication.run(UserServiceApplication.class, args);
@@ -37,10 +31,7 @@ public class UserServiceApplication{
 
     @EventListener(ApplicationReadyEvent.class)
     public void initDefaultData(){
-        roleService.init();
-        accountService.init();
+        //TODO Auto-generated data for role
     }
-
-
 
 }
