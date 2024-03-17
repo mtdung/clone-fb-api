@@ -1,4 +1,4 @@
-package vn.edu.fpt.fb.common.constant.annotation;
+package vn.edu.fpt.fb.common.annotation;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -13,7 +13,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasRole('ADMIN')")
-public @interface IsAdmin {
-
+@PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+public @interface IsManager {
 }

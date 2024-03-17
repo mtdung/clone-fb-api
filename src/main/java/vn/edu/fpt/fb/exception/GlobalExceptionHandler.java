@@ -27,9 +27,9 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import vn.edu.fpt.fb.common.constant.ResponseStatusEnum;
-import vn.edu.fpt.fb.common.constant.factory.GeneralResponse;
-import vn.edu.fpt.fb.common.constant.factory.ResponseFactory;
-import vn.edu.fpt.fb.common.constant.factory.ResponseStatusCustom;
+import vn.edu.fpt.fb.common.factory.GeneralResponse;
+import vn.edu.fpt.fb.common.factory.ResponseFactory;
+import vn.edu.fpt.fb.common.factory.ResponseStatusCustom;
 
 import java.util.Objects;
 
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         if(Objects.isNull(ex)){
             return responseFactory.response(ResponseStatusEnum.INTERNAL_SERVER_ERROR, "BusinessException missing handler details");
         }
-        log.error("BusinessException: {}", ex.getMessage());
+        log.error("BusinessException: {}", ex.getMessage(), ex);
 
         if(Objects.nonNull(ex.getMessage())) {
             return responseFactory.response(ex.getStatus(), ex.getMessage());
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         if(Objects.isNull(ex)){
             return responseFactory.response(ResponseStatusEnum.INTERNAL_SERVER_ERROR, "AccessDeniedException missing handler details");
         }
-        log.error("AccessDeniedException: {}", ex.getMessage());
+        log.error("AccessDeniedException: {}", ex.getMessage(), ex);
 
         if(Objects.nonNull(ex.getMessage())) {
             return responseFactory.response(ResponseStatusEnum.FORBIDDEN, ex.getMessage());
@@ -82,7 +82,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         if(Objects.isNull(ex)){
             return responseFactory.response(ResponseStatusEnum.INTERNAL_SERVER_ERROR, "AuthenticationException missing handler details");
         }
-        log.error("UsernameNotFoundException: {}", ex.getMessage());
+        log.error("UsernameNotFoundException: {}", ex.getMessage(), ex);
 
         if(Objects.nonNull(ex.getMessage())) {
             return responseFactory.response(ResponseStatusEnum.UNAUTHORIZED, ex.getMessage());
@@ -97,7 +97,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         if(Objects.isNull(ex)){
             return responseFactory.response(ResponseStatusEnum.INTERNAL_SERVER_ERROR, "Exception missing handler details");
         }
-        log.error("Exception: {}", ex.getMessage());
+        log.error("Exception: {}", ex.getMessage(), ex);
 
         return responseFactory.response(ResponseStatusEnum.INTERNAL_SERVER_ERROR, ex.getMessage());
     }

@@ -45,6 +45,8 @@ public class SecurityConfiguration {
     private UserDetailsService userDetailsService;
     @Value("${app.application-context}")
     private String applicationContext;
+    @Value("${app.application-version}")
+    private String applicationVersion;
 
     @Autowired
     private JwtFilter jwtFilter;
@@ -78,10 +80,10 @@ public class SecurityConfiguration {
                 .antMatchers("/actuator/**")
                 .antMatchers("/swagger-ui/**")
                 .antMatchers("/v3/api-docs/**")
-                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/user/login")
-                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/user/login/gg")
-                .antMatchers(HttpMethod.POST,"/"+applicationContext+"/public/api/v1/user/token/refresh")
-                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/public/api/v1/user/password/reset");
+                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/"+applicationVersion+"/authen/login")
+                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/"+applicationVersion+"/authen/gg-login")
+                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/"+applicationVersion+"/authen/refresh-token")
+                .antMatchers(HttpMethod.POST, "/"+applicationContext+"/"+applicationVersion+"/authen/reset-pass");
 
     }
     @Bean

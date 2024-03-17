@@ -9,7 +9,8 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.UUID;
 
-@Table(name = "SYS_USER")
+
+@Table(name = "FILE_INFO")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,22 +18,22 @@ import java.util.UUID;
 @Setter
 @ToString
 @Builder
-public class SysUser implements Serializable {
+public class FileInfo implements Serializable {
     private static final long serialVersionUID = 5088723963318493305L;
     @Id
     @Builder.Default
     @Column(name = "ID")
-    private String userId = UUID.randomUUID().toString();
-    @Column(name = "USERNAME")
-    private String username;
-    @Column(name = "PASSWORD")
-    private String password;
+    private String fileId = UUID.randomUUID().toString();
+    @Column(name = "BUCKET")
+    private String bucket;
+    @Column(name = "FILE_KEY")
+    private String fileKey;
+    @Column(name = "FILE_NAME")
+    private String fileName;
+    @Column(name = "CONTENT_TYPE")
+    private Integer contentType;
     @Column(name = "STATUS")
     private Integer status;
-    @Column(name = "USER_TYPE")
-    private Integer userType;
-    @Column(name = "EMAIL")
-    private String email;
-    @Column(name = "PHONE_NUMBER")
-    private String phoneNumber;
+    @Column(name = "SIZE")
+    private Long size;
 }

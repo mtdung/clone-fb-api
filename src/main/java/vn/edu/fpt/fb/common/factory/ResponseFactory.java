@@ -1,4 +1,4 @@
-package vn.edu.fpt.fb.common.constant.factory;
+package vn.edu.fpt.fb.common.factory;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

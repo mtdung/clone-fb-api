@@ -57,4 +57,13 @@ public class RequestDataUtils {
             return DateTimeConverter.toLocalDateTime(dateTo);
         }
     }
+
+    public static boolean isNullOrEmptyString(String... strings) {
+        for (String str : strings) {
+            if (str == null || str.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
