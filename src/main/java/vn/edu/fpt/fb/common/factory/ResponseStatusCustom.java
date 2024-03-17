@@ -1,4 +1,4 @@
-package vn.edu.fpt.fb.common.constant.factory;
+package vn.edu.fpt.fb.common.factory;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

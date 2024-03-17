@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -17,7 +18,7 @@ import java.util.UUID;
  * @contact : 0339850697- congdung2510@gmail.com
  **/
 
-@Table(name = "SYS_ROLE")
+@Table(name = "FILE_INFO")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,15 +26,22 @@ import java.util.UUID;
 @Setter
 @ToString
 @Builder
-public class SysRole implements Serializable {
+public class FileInfo implements Serializable {
     private static final long serialVersionUID = 5088723963318493305L;
     @Id
     @Builder.Default
     @Column(name = "ID")
-    private String roleId = UUID.randomUUID().toString();
-    @Column(name = "ROLE_NAME")
-    private String roleName;
-    @Builder.Default
-    @Column(name = "IS_ENABLED")
-    private Boolean isEnabled = true;
+    private String fileId = UUID.randomUUID().toString();
+    @Column(name = "BUCKET")
+    private String bucket;
+    @Column(name = "FILE_KEY")
+    private String fileKey;
+    @Column(name = "FILE_NAME")
+    private String fileName;
+    @Column(name = "CONTENT_TYPE")
+    private Integer contentType;
+    @Column(name = "STATUS")
+    private Integer status;
+    @Column(name = "SIZE")
+    private Long size;
 }

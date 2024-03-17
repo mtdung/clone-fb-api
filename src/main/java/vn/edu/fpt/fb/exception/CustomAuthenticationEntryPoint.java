@@ -7,9 +7,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import vn.edu.fpt.fb.common.constant.ResponseStatusEnum;
-import vn.edu.fpt.fb.common.constant.factory.GeneralResponse;
-import vn.edu.fpt.fb.common.constant.factory.ResponseFactory;
-import vn.edu.fpt.fb.common.constant.factory.ResponseStatusCustom;
+import vn.edu.fpt.fb.common.factory.GeneralResponse;
+import vn.edu.fpt.fb.common.factory.ResponseFactory;
+import vn.edu.fpt.fb.common.factory.ResponseStatusCustom;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

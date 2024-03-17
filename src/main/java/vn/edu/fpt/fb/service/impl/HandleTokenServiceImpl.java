@@ -12,7 +12,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.fb.common.constant.ResponseStatusEnum;
-import vn.edu.fpt.fb.dto.LoginRequest;
+import vn.edu.fpt.fb.dto.request.LoginRequest;
+import vn.edu.fpt.fb.entity.SysRole;
 import vn.edu.fpt.fb.entity.SysUser;
 import vn.edu.fpt.fb.exception.BusinessException;
 import vn.edu.fpt.fb.service.inter.HandleTokenService;
@@ -71,7 +72,7 @@ public class HandleTokenServiceImpl implements HandleTokenService {
     }
 
     @Override
-    public String generateToken(SysUser sysUser, UserDetails userDetails) {
+    public String generateToken(SysUser sysUser, List<SysRole> sysRoles, UserDetails userDetails) {
 
         Map<String, Object> claims = new HashMap<>();
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
@@ -81,7 +82,7 @@ public class HandleTokenServiceImpl implements HandleTokenService {
         String authorities = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
         claims.put(Claims.ID, sysUser.getUserId());
         claims.put(Claims.SUBJECT, sysUser.getUsername());
-//        claims.put("roles", sysUser.getRoles().stream().map(_Role::getRoleName).collect(Collectors.toList()));
+        claims.put("roles", sysRoles.stream().map(SysRole::getRoleName).collect(Collectors.toList()));
         claims.put("authorities", authorities);
         claims.put(Claims.ISSUER, APPLICATION_CONTEXT);
         claims.put(Claims.EXPIRATION, expirationTime);
@@ -110,7 +111,7 @@ public class HandleTokenServiceImpl implements HandleTokenService {
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
         calendar.add(Calendar.SECOND, REFRESH_TOKEN_EXPIRATION);
         Map<String, Object> claims = new HashMap<>();
-        claims.put("emailOrUsername", request.getEmailOrUsername());
+        claims.put("emailOrUsernameOrPhoneNumber", request.getEmailOrUsernameOrPhoneNumber());
         claims.put("password", request.getPassword());
         claims.put(Claims.EXPIRATION, calendar.getTimeInMillis());
 
@@ -140,11 +141,11 @@ public class HandleTokenServiceImpl implements HandleTokenService {
             throw new BusinessException(ResponseStatusEnum.UNAUTHORIZED, "Token invalid expire time");
         }
 
-        String emailOrUsername = body.get("emailOrUsername", String.class);
+        String emailOrUsername = body.get("emailOrUsernameOrPhoneNumber", String.class);
         String password = body.get("password", String.class);
 
         return LoginRequest.builder()
-                .emailOrUsername(emailOrUsername)
+                .emailOrUsernameOrPhoneNumber(emailOrUsername)
                 .password(password)
                 .build();
     }

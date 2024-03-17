@@ -27,9 +27,9 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import vn.edu.fpt.fb.common.constant.ResponseStatusEnum;
-import vn.edu.fpt.fb.common.constant.factory.GeneralResponse;
-import vn.edu.fpt.fb.common.constant.factory.ResponseFactory;
-import vn.edu.fpt.fb.common.constant.factory.ResponseStatusCustom;
+import vn.edu.fpt.fb.common.factory.GeneralResponse;
+import vn.edu.fpt.fb.common.factory.ResponseFactory;
+import vn.edu.fpt.fb.common.factory.ResponseStatusCustom;
 
 import java.util.Objects;
 

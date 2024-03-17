@@ -28,8 +28,16 @@ public class SysUser implements Serializable {
     @Builder.Default
     @Column(name = "ID")
     private String userId = UUID.randomUUID().toString();
-    @Column(name = "USER_NAME")
+    @Column(name = "USERNAME")
     private String username;
-    @Column(name = "PASS_WORD")
+    @Column(name = "PASSWORD")
     private String password;
+    @Column(name = "STATUS")
+    private Integer status;
+    @Column(name = "USER_TYPE")
+    private Integer userType;
+    @Column(name = "EMAIL")
+    private String email;
+    @Column(name = "PHONE_NUMBER")
+    private String phoneNumber;
 }
