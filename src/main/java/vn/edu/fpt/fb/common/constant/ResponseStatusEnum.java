@@ -4,14 +4,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-/**
- * vn.edu.fpt.accounts.constant
- *
- * @author : Portgas.D.Ace
- * @created : 12/03/2023
- * @contact : 0339850697- congdung2510@gmail.com
- **/
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ResponseStatusEnum implements ResponseStatusOperation {
     SUCCESS("SUCCESS", HttpStatus.OK),

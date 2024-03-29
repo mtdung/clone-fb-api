@@ -7,16 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * vn.edu.fpt.accounts.entity
- *
- * @author : Portgas.D.Ace
- * @created : 12/03/2023
- * @contact : 0339850697- congdung2510@gmail.com
- **/
 
 @Table(name = "FILE_INFO")
 @Entity

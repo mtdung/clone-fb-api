@@ -2,17 +2,12 @@ package vn.edu.fpt.fb.entity;
 
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.UUID;
-
-/**
- * vn.edu.fpt.accounts.entity
- *
- * @author : Portgas.D.Ace
- * @created : 12/03/2023
- * @contact : 0339850697- congdung2510@gmail.com
- **/
 
 @Table(name = "SYS_USER")
 @Entity

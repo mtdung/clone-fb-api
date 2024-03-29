@@ -1,7 +1,5 @@
 package vn.edu.fpt.fb.utils;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import vn.edu.fpt.fb.common.constant.ResponseStatusEnum;
 import vn.edu.fpt.fb.exception.BusinessException;
 

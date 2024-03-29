@@ -1,7 +1,9 @@
 package vn.edu.fpt.fb.filter;
 
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +30,8 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final HandleTokenService handleTokenService;
+    @Autowired
+    Gson gson = new Gson();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -41,13 +45,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
         final String token = header.split(" ")[1].trim();
         Optional<Authentication> authenticationFromToken = handleTokenService.getAuthenticationFromToken(token);
-
+        log.info("authenticationFromToken: {}", gson.toJson(authenticationFromToken));
         if(authenticationFromToken.isEmpty()){
             chain.doFilter(request, response);
             return;
         }
         Authentication authentication = authenticationFromToken.get();
-
+        log.info("Authentication: {}", gson.toJson(authentication));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);
     }
