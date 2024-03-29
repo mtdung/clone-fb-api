@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
@@ -21,8 +22,11 @@ import vn.edu.fpt.fb.exception.BusinessException;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * vn.edu.fpt.accounts.utils
@@ -54,6 +58,18 @@ public class AuditorUtils {
             return Optional.empty();
         }
     }
+
+    public static List<String> getRole() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+        return authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+    }
+
+    public static boolean hasRole(String role) {
+        List<String> roles = getRole();
+        return roles.contains(role);
+    }
+
     public static Key getSigningKey() {
         byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
