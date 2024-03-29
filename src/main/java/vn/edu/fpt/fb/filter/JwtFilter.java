@@ -45,7 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         final String token = header.split(" ")[1].trim();
         Optional<Authentication> authenticationFromToken = handleTokenService.getAuthenticationFromToken(token);
-        log.info("authenticationFromToken: {}", gson.toJson(authenticationFromToken));
+        //log.info("authenticationFromToken: {}", gson.toJson(authenticationFromToken));
         if(authenticationFromToken.isEmpty()){
             chain.doFilter(request, response);
             return;
