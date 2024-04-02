@@ -8,7 +8,7 @@ import vn.edu.fpt.fb.common.factory.GeneralResponse;
 import vn.edu.fpt.fb.dto.request.LoginRequest;
 import vn.edu.fpt.fb.dto.response.LoginResponse;
 
-@RequestMapping("${app.application-context}/${app.application-version}/authen")
+@RequestMapping("${app.application-context}/${app.application-version}/${app.application-public}/authen")
 public interface AuthenticationController {
 
     @PostMapping("/login")
