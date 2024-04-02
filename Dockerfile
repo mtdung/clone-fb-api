@@ -1,6 +1,11 @@
-FROM adoptopenjdk/openjdk11:alpine-jre
-VOLUME /tmp
-ARG JAR_FILE=target/*.jar
+FROM maven:3.8.1-openjdk-11-slim AS build
+WORKDIR /app
+COPY pom.xml /app
+COPY src/ /app/src
+RUN mvn clean package
+
+FROM adoptopenjdk/openjdk11:alpine-jre as publish
 WORKDIR /opt/app
-COPY ${JAR_FILE} horo-1.0.jar
-ENTRYPOINT ["java","-jar","horo-1.0.jar"]
+VOLUME /opt/app/resources
+COPY --from=build /app/target/*.jar /opt/app/clone-fb.jar
+CMD ["java", "-jar", "clone-fb.jar"]
