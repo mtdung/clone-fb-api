@@ -9,6 +9,7 @@ import vn.edu.fpt.fb.common.factory.ResponseFactory;
 import vn.edu.fpt.fb.controller.inter.SystemUserController;
 import vn.edu.fpt.fb.dto.request.CreateUserRequest;
 import vn.edu.fpt.fb.dto.request.LoginRequest;
+import vn.edu.fpt.fb.dto.request.ResetPasswordRequest;
 import vn.edu.fpt.fb.dto.request.UpdateUserRequest;
 import vn.edu.fpt.fb.dto.response.LoginResponse;
 import vn.edu.fpt.fb.service.inter.SystemUserService;
@@ -33,16 +34,19 @@ public class SystemUserControllerImpl implements SystemUserController {
 
     @Override
     public ResponseEntity<GeneralResponse<String>> updateUser(UpdateUserRequest request) {
-        return responseFactory.response("");
+        String result = systemUserService.updateUser(request);
+        return responseFactory.response(result);
     }
 
     @Override
     public ResponseEntity<GeneralResponse<String>> lockUser(String userId) {
-        return responseFactory.response("");
+        String result = systemUserService.lockUser(userId);
+        return responseFactory.response(result);
     }
 
     @Override
-    public ResponseEntity<GeneralResponse<String>> resetPassword(String userId) {
-        return responseFactory.response("");
+    public ResponseEntity<GeneralResponse<String>> resetPassword(ResetPasswordRequest request) {
+        String result = systemUserService.resetPass(request);
+        return responseFactory.response(result);
     }
 }
