@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import vn.edu.fpt.fb.common.annotation.IsUser;
 import vn.edu.fpt.fb.common.factory.GeneralResponse;
 import vn.edu.fpt.fb.dto.request.CreateUserRequest;
+import vn.edu.fpt.fb.dto.request.ResetPasswordRequest;
 import vn.edu.fpt.fb.dto.request.UpdateUserRequest;
 
 @RequestMapping("${app.application-context}/${app.application-version}/${app.application-private}/user")
@@ -26,5 +27,5 @@ public interface SystemUserController {
 
     @PostMapping("/reset-password")
     @IsUser
-    ResponseEntity<GeneralResponse<String>> resetPassword(@RequestParam String userId);
+    ResponseEntity<GeneralResponse<String>> resetPassword(@RequestBody ResetPasswordRequest request);
 }

@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class UpdateUserRequest {
+public class ResetPasswordRequest {
     private String userId;
-    private String email;
-    private String phoneNumber;
-    private Integer status;
+    private String newPassword;
+    private String repeatPassword;
 }

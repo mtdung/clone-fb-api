@@ -2,13 +2,16 @@ package vn.edu.fpt.fb.service.impl;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.quota.ClientQuotaAlteration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.fb.common.constant.ResponseStatusEnum;
+import vn.edu.fpt.fb.common.constant.StatusConstant;
 import vn.edu.fpt.fb.common.constant.StatusConstant.StatusUser;
 import vn.edu.fpt.fb.common.constant.TypeConstant;
 import vn.edu.fpt.fb.dto.request.CreateUserRequest;
+import vn.edu.fpt.fb.dto.request.ResetPasswordRequest;
 import vn.edu.fpt.fb.dto.request.UpdateUserRequest;
 import vn.edu.fpt.fb.entity.SysRole;
 import vn.edu.fpt.fb.entity.SysUser;
@@ -22,7 +25,9 @@ import vn.edu.fpt.fb.service.inter.SystemUserService;
 import vn.edu.fpt.fb.utils.AuditorUtils;
 import vn.edu.fpt.fb.utils.Utils;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static vn.edu.fpt.fb.common.constant.Constant.*;
 import static vn.edu.fpt.fb.utils.RequestDataUtils.isNullOrEmptyString;
@@ -44,11 +49,11 @@ public class SystemUserServiceImpl implements SystemUserService {
     PasswordEncoder encoder;
 
     @Autowired
-     Gson gson = new Gson();
+    Gson gson = new Gson();
 
     @Override
     public String createUser(CreateUserRequest req) {
-        log.info("Request CreateUser: {}",gson.toJson(req));
+        log.info("Request CreateUser: {}", gson.toJson(req));
         //validate
         Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
                 USERNAME_OR_PASS_EMPTY,
@@ -84,16 +89,89 @@ public class SystemUserServiceImpl implements SystemUserService {
 
     @Override
     public String updateUser(UpdateUserRequest req) {
-        return null;
+        //validate
+        Optional<SysUser> sysUserOtp = sysUserRepo.findByEmailOrPhoneNumber(req.getEmail(), req.getPhoneNumber());
+        Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
+                EMAIL_PHONE_EXIST,
+                sysUserOtp.isPresent());
+        Optional<SysUser> sysUser = sysUserRepo.findById(req.getUserId());
+        Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
+                ACCOUNT_NOT_EXIST,
+                sysUser.isEmpty());
+        //update user
+        SysUser sysUserUpdate = sysUser.get();
+        log.info("SysUser update : {}", gson.toJson(sysUser));
+        sysUserUpdate.setEmail(req.getEmail());
+        sysUserUpdate.setPhoneNumber(req.getPhoneNumber());
+        sysUserUpdate.setStatus(req.getStatus());
+        sysUserRepo.save(sysUserUpdate);
+        return "Success";
     }
 
     @Override
     public String lockUser(String userId) {
-        return null;
+        Optional<SysUser> sysUser = sysUserRepo.findById(userId);
+        Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
+                ACCOUNT_NOT_EXIST,
+                sysUser.isEmpty());
+        SysUser sysUserLock = sysUser.get();
+        log.info("SysUser lock : {}", gson.toJson(sysUserLock));
+        if(sysUserLock.getStatus().equals(StatusUser.STATUS_ACTIVE)){
+            sysUserLock.setStatus(StatusUser.STATUS_LOCKED);
+        }else if(sysUserLock.getStatus().equals(StatusUser.STATUS_LOCKED)){
+            sysUserLock.setStatus(StatusUser.STATUS_ACTIVE);
+        }else{
+            sysUserLock.setStatus(StatusUser.STATUS_LOCKED);
+        }
+        sysUserRepo.save(sysUserLock);
+        return "Success";
     }
 
     @Override
-    public String resetPass(String userId) {
-        return null;
+    public String resetPass(ResetPasswordRequest req) {
+        Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
+                PASSWORD_INVALID,
+                validatePassword(req.getNewPassword()));
+        Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
+                REPEAT_PASSWORD_INVALID,
+                req.getRepeatPassword()== null || !req.getRepeatPassword().equals(req.getNewPassword()));
+        Optional<SysUser> sysUser = sysUserRepo.findById(req.getUserId());
+        Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
+                ACCOUNT_NOT_EXIST,
+                sysUser.isEmpty());
+        SysUser sysUserChangePass = sysUser.get();
+        log.info("SysUser reset pass : {}", gson.toJson(sysUser));
+        if(validatePassword(req.getNewPassword())){
+            if(req.getRepeatPassword()!= null && req.getRepeatPassword().equals(req.getNewPassword())){
+                sysUserChangePass.setPassword(req.getNewPassword());
+                sysUserRepo.save(sysUserChangePass);
+            }
+        }
+        sysUserRepo.save(sysUserChangePass);
+        return "Success";
+    }
+
+    private boolean validatePassword(String password){
+        // Kiểm tra độ dài
+        if (password.length() < 8) {
+            return false;
+        }
+
+        // Kiểm tra xem có ít nhất một chữ cái hay không
+        if (!Pattern.compile("[a-zA-Z]").matcher(password).find()) {
+            return false;
+        }
+
+        // Kiểm tra xem có ít nhất một chữ số hay không
+        if (!Pattern.compile("[0-9]").matcher(password).find()) {
+            return false;
+        }
+
+        // Kiểm tra xem có ít nhất một ký tự đặc biệt hay không
+        if (!Pattern.compile("[^a-zA-Z0-9]").matcher(password).find()) {
+            return false;
+        }
+        // Mật khẩu đáp ứng tất cả các yêu cầu
+        return true;
     }
 }
