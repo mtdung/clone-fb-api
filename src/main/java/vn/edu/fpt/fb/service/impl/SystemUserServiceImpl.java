@@ -100,7 +100,10 @@ public class SystemUserServiceImpl implements SystemUserService {
                 sysUser.isEmpty());
         //update user
         SysUser sysUserUpdate = sysUser.get();
+        //todo : log thì log debug thôi còn request đầu vào thì log trên cùng xong log info riêng để tránh rác log,
+        // với cả check xem email với phone cái nào giống cũ thì báo lỗi để tránh spam db k cần thiết
         log.info("SysUser update : {}", gson.toJson(sysUser));
+        //todo : chỗ này t chưa viết regex check email với sđt thì m viết thêm vào cho cả phần create nữa nhé
         sysUserUpdate.setEmail(req.getEmail());
         sysUserUpdate.setPhoneNumber(req.getPhoneNumber());
         sysUserUpdate.setStatus(req.getStatus());
@@ -121,6 +124,7 @@ public class SystemUserServiceImpl implements SystemUserService {
         }else if(sysUserLock.getStatus().equals(StatusUser.STATUS_LOCKED)){
             sysUserLock.setStatus(StatusUser.STATUS_ACTIVE);
         }else{
+            //todo : else thì báo lại status không cho phép lock or unlock tránh sau status mới vd: expired xong ấn 2 lần là tự thành active
             sysUserLock.setStatus(StatusUser.STATUS_LOCKED);
         }
         sysUserRepo.save(sysUserLock);
@@ -129,6 +133,8 @@ public class SystemUserServiceImpl implements SystemUserService {
 
     @Override
     public String resetPass(ResetPasswordRequest req) {
+        //todo : logic sai này, reset thì không cho nhập pass mới mà gửi mail gen 1 passrandom thôi,
+        // sinh 1 api changePass để nó đổi pass là được. Để tránh việc admin có thể tùy ý dùng account của user
         Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
                 PASSWORD_INVALID,
                 validatePassword(req.getNewPassword()));
