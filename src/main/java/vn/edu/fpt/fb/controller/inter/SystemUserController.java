@@ -31,5 +31,5 @@ public interface SystemUserController {
 
     @PostMapping("/reset-password")
     @IsUser
-    ResponseEntity<GeneralResponse<String>> resetPassword(@RequestBody ResetPasswordRequest request);
+    ResponseEntity<GeneralResponse<String>> resetPassword(@RequestParam String userId);
 }
