@@ -11,7 +11,7 @@ import vn.edu.fpt.fb.common.constant.StatusConstant;
 import vn.edu.fpt.fb.common.constant.StatusConstant.StatusUser;
 import vn.edu.fpt.fb.common.constant.TypeConstant;
 import vn.edu.fpt.fb.dto.request.CreateUserRequest;
-import vn.edu.fpt.fb.dto.request.ResetPasswordRequest;
+import vn.edu.fpt.fb.dto.request.ChangePasswordRequest;
 import vn.edu.fpt.fb.dto.request.UpdateUserRequest;
 import vn.edu.fpt.fb.entity.SysRole;
 import vn.edu.fpt.fb.entity.SysUser;
@@ -22,11 +22,11 @@ import vn.edu.fpt.fb.repository.SysUserRepo;
 import vn.edu.fpt.fb.repository.UserRoleRepo;
 import vn.edu.fpt.fb.service.inter.HandleTokenService;
 import vn.edu.fpt.fb.service.inter.SystemUserService;
-import vn.edu.fpt.fb.utils.AuditorUtils;
 import vn.edu.fpt.fb.utils.Utils;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 import static vn.edu.fpt.fb.common.constant.Constant.*;
@@ -58,14 +58,24 @@ public class SystemUserServiceImpl implements SystemUserService {
         Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
                 USERNAME_OR_PASS_EMPTY,
                 isNullOrEmptyString(req.getUserName(), req.getPassword(), req.getEmail(), req.getPhoneNumber()));
+
         Optional<SysUser> sysUserOtp = sysUserRepo.findByEmailOrUsernameOrPhoneNumber(req.getEmail(), req.getUserName(), req.getPhoneNumber());
         Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
                 USERNAME_EMAIL_PHONE_EXIST,
                 sysUserOtp.isPresent());
+
         Optional<SysRole> sysRoleOtp = sysRoleRepo.findById(req.getRoleId());
         Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
                 ROLE_NOT_EXIST,
                 sysRoleOtp.isEmpty());
+
+        Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
+                PHONE_NUMBER_INVALID,
+                !validatePhoneNumber(req.getPhoneNumber()));
+
+        Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
+                EMAIL_INVALID,
+                !validateEmail(req.getEmail()));
         //insert
         SysUser sysUser = SysUser.builder()
                 .username(req.getUserName())
@@ -84,60 +94,64 @@ public class SystemUserServiceImpl implements SystemUserService {
         userRoleRepo.save(userRole);
 
 
-        return "Success";
+        return SUCCESS;
     }
 
     @Override
     public String updateUser(UpdateUserRequest req) {
+        log.info("Request UpdateUser : {}", gson.toJson(req));
         //validate
         Optional<SysUser> sysUserOtp = sysUserRepo.findByEmailOrPhoneNumber(req.getEmail(), req.getPhoneNumber());
         Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
                 EMAIL_PHONE_EXIST,
                 sysUserOtp.isPresent());
+
         Optional<SysUser> sysUser = sysUserRepo.findById(req.getUserId());
         Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
                 ACCOUNT_NOT_EXIST,
                 sysUser.isEmpty());
+
+        Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
+                PHONE_NUMBER_INVALID,
+                !validatePhoneNumber(req.getPhoneNumber()));
+
+        Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
+                EMAIL_INVALID,
+                !validateEmail(req.getEmail()));
         //update user
         SysUser sysUserUpdate = sysUser.get();
-        //todo : log thì log debug thôi còn request đầu vào thì log trên cùng xong log info riêng để tránh rác log,
-        // với cả check xem email với phone cái nào giống cũ thì báo lỗi để tránh spam db k cần thiết
-        log.info("SysUser update : {}", gson.toJson(sysUser));
-        //todo : chỗ này t chưa viết regex check email với sđt thì m viết thêm vào cho cả phần create nữa nhé
         sysUserUpdate.setEmail(req.getEmail());
         sysUserUpdate.setPhoneNumber(req.getPhoneNumber());
         sysUserUpdate.setStatus(req.getStatus());
         sysUserRepo.save(sysUserUpdate);
-        return "Success";
+        return SUCCESS;
     }
 
     @Override
     public String lockUser(String userId) {
+        log.info("Request LockUser : {}", userId);
         Optional<SysUser> sysUser = sysUserRepo.findById(userId);
         Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
                 ACCOUNT_NOT_EXIST,
                 sysUser.isEmpty());
         SysUser sysUserLock = sysUser.get();
-        log.info("SysUser lock : {}", gson.toJson(sysUserLock));
         if(sysUserLock.getStatus().equals(StatusUser.STATUS_ACTIVE)){
             sysUserLock.setStatus(StatusUser.STATUS_LOCKED);
         }else if(sysUserLock.getStatus().equals(StatusUser.STATUS_LOCKED)){
             sysUserLock.setStatus(StatusUser.STATUS_ACTIVE);
         }else{
-            //todo : else thì báo lại status không cho phép lock or unlock tránh sau status mới vd: expired xong ấn 2 lần là tự thành active
-            sysUserLock.setStatus(StatusUser.STATUS_LOCKED);
+            return STATUS_INVALID_LOCK;
         }
         sysUserRepo.save(sysUserLock);
-        return "Success";
+        return SUCCESS;
     }
 
     @Override
-    public String resetPass(ResetPasswordRequest req) {
-        //todo : logic sai này, reset thì không cho nhập pass mới mà gửi mail gen 1 passrandom thôi,
-        // sinh 1 api changePass để nó đổi pass là được. Để tránh việc admin có thể tùy ý dùng account của user
+    public String changePassword(ChangePasswordRequest req) {
+        log.info("Request ChangePassword : {}", gson.toJson(req));
         Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
                 PASSWORD_INVALID,
-                validatePassword(req.getNewPassword()));
+                !validatePassword(req.getNewPassword()));
         Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
                 REPEAT_PASSWORD_INVALID,
                 req.getRepeatPassword()== null || !req.getRepeatPassword().equals(req.getNewPassword()));
@@ -146,7 +160,6 @@ public class SystemUserServiceImpl implements SystemUserService {
                 ACCOUNT_NOT_EXIST,
                 sysUser.isEmpty());
         SysUser sysUserChangePass = sysUser.get();
-        log.info("SysUser reset pass : {}", gson.toJson(sysUser));
         if(validatePassword(req.getNewPassword())){
             if(req.getRepeatPassword()!= null && req.getRepeatPassword().equals(req.getNewPassword())){
                 sysUserChangePass.setPassword(req.getNewPassword());
@@ -154,7 +167,34 @@ public class SystemUserServiceImpl implements SystemUserService {
             }
         }
         sysUserRepo.save(sysUserChangePass);
-        return "Success";
+        return SUCCESS;
+    }
+
+    @Override
+    public String resetPassword(String userId) {
+        log.info("Request ResetPassword : {}", userId);
+        Optional<SysUser> sysUser = sysUserRepo.findById(userId);
+        Utils.throwException(ResponseStatusEnum.BAD_REQUEST,
+                ACCOUNT_NOT_EXIST,
+                sysUser.isEmpty());
+        SysUser sysUserResetPass = sysUser.get();
+        sysUserResetPass.setPassword(randomPassword());
+        sysUserRepo.save(sysUserResetPass);
+        return SUCCESS;
+    }
+
+    private String randomPassword(){
+        //random 1 pass gồm 8 kí tự ngẫu nhiên
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*!#@";
+        StringBuilder randomString = new StringBuilder();
+
+        Random random = new Random();
+        for (int i = 0; i < 8; i++) {
+            int randomIndex = random.nextInt(characters.length());
+            randomString.append(characters.charAt(randomIndex));
+        }
+
+        return randomString.toString();
     }
 
     private boolean validatePassword(String password){
@@ -180,4 +220,25 @@ public class SystemUserServiceImpl implements SystemUserService {
         // Mật khẩu đáp ứng tất cả các yêu cầu
         return true;
     }
+
+    private boolean validatePhoneNumber(String phoneNumber){
+        //check số đth gồm 11 số
+        String regex = "^\\d{11}$";
+        if (Pattern.matches(regex, phoneNumber)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean validateEmail(String email){
+        String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+
+        if (Pattern.matches(regex, email)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
