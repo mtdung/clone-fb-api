@@ -12,4 +12,6 @@ import java.util.Optional;
 @Repository
 public interface SysUserRepo extends JpaRepository<SysUser, String> {
     Optional<SysUser> findByEmailOrUsernameOrPhoneNumber(String email, String username, String phoneNumber);
+
+    Optional<SysUser> findByEmailOrPhoneNumber(String email, String phoneNumber);
 }

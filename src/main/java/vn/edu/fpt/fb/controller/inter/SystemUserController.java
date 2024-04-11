@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import vn.edu.fpt.fb.common.annotation.IsUser;
 import vn.edu.fpt.fb.common.factory.GeneralResponse;
 import vn.edu.fpt.fb.dto.request.CreateUserRequest;
+import vn.edu.fpt.fb.dto.request.ChangePasswordRequest;
 import vn.edu.fpt.fb.dto.request.UpdateUserRequest;
 
 @RequestMapping("${app.application-context}/${app.application-version}/${app.application-private}/user")
@@ -23,6 +24,10 @@ public interface SystemUserController {
     @PostMapping("/lock")
     @IsUser
     ResponseEntity<GeneralResponse<String>> lockUser(@RequestParam String userId);
+
+    @PostMapping("/change-password")
+    @IsUser
+    ResponseEntity<GeneralResponse<String>> changePassword(@RequestBody ChangePasswordRequest request);
 
     @PostMapping("/reset-password")
     @IsUser
